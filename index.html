@@ -47,7 +47,7 @@
         }
         h1 {
             color: #1F2937; /* Color de título más oscuro */
-            font-size: 2.25rem; /* Tamaño de fuente más grande */
+            font-size: 2.7rem; /* Tamaño de fuente más grande (2.25rem * 1.20) */
             font-weight: 700; /* Negrita */
             margin-bottom: 2rem; /* Espacio inferior */
             text-align: center;
@@ -69,7 +69,7 @@
             padding: 0.75rem; /* Aumento del padding */
             border: 1px solid #D1D5DB; /* Borde gris claro */
             border-radius: 0.5rem; /* Bordes redondeados */
-            font-size: 1rem;
+            font-size: 1.2rem; /* 1rem * 1.20 */
             color: #1F2937;
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
@@ -100,7 +100,7 @@
             text-align: center;
         }
         .time-input-group span {
-            font-size: 1.25rem;
+            font-size: 1.5rem; /* 1.25rem * 1.20 */
             font-weight: 600;
             color: #4B5563;
         }
@@ -133,7 +133,7 @@
             padding: 0.75rem;
             border: 1px solid #E5E7EB; /* Borde de tabla más suave */
             text-align: left;
-            font-size: 0.95rem;
+            font-size: 1.14rem; /* 0.95rem * 1.20 */
             color: #374151;
         }
         .options-table th {
@@ -147,7 +147,7 @@
             padding: 0.5rem;
             border: 1px solid #D1D5DB;
             border-radius: 0.375rem;
-            font-size: 0.9rem;
+            font-size: 1.08rem; /* 0.9rem * 1.20 */
         }
         .options-table button {
             background-color: #EF4444; /* Rojo para eliminar */
@@ -182,7 +182,7 @@
             border-radius: 0.75rem;
             border: none;
             cursor: pointer;
-            font-size: 1.125rem;
+            font-size: 1.35rem; /* 1.125rem * 1.20 */
             font-weight: 700;
             width: 100%;
             margin-top: 2rem;
@@ -194,7 +194,7 @@
         }
         .error-message {
             color: #EF4444; /* Rojo para mensajes de error */
-            font-size: 0.875rem;
+            font-size: 1.05rem; /* 0.875rem * 1.20 */
             margin-top: 0.5rem;
             display: none; /* Oculto por defecto */
         }
@@ -210,7 +210,7 @@
                 margin-top: 1rem;
             }
             h1 {
-                font-size: 1.75rem;
+                font-size: 2.1rem; /* 1.75rem * 1.20 */
                 margin-bottom: 1.5rem;
             }
             .form-group-split {
@@ -855,14 +855,19 @@
                 }
 
                 doc.setFont("Times-Roman", "normal"); // Usar Times-Roman para el texto
-                doc.setFontSize(14 * 1.25); // Aumentar tamaño de fuente para mejor legibilidad
+                doc.setFontSize(14 * 1.30); // Aumentar tamaño de fuente del saludo en un 30%
                 doc.setTextColor(70, 70, 70); // Gris medio
                 
-                // Construir el texto introductorio con el tipo de evento seleccionado
-                const introText = `Estimado ${cliente}: Nos complace presentarle nuestra cotización detallada para su ${tipoDeEventoParaSaludo}. Esta propuesta ha sido cuidadosamente preparada para ${adultos} adulto(s) y ${ninos} niño(s) que se llevará a cabo el ${fechaFormateada} a las ${horaFormateada}. Esperamos que sea de su agrado. Para cualquier consulta adicional o para confirmar, no dude en contactarnos al 8830-7837. Estamos a su entera disposición.`;
-                const splitIntroText = doc.splitTextToSize(introText, doc.internal.pageSize.width - 40); // 40 es el margen (20 a cada lado)
-                doc.text(splitIntroText, 20, yOffset);
-                yOffset += (splitIntroText.length * (8 * 1.25)) + 15; // Espacio después del texto introductorio, ajustado para fuente más grande
+                // Construir el texto introductorio en dos párrafos
+                const introText1 = `Estimado ${cliente}: Nos complace presentarle nuestra cotización detallada para su ${tipoDeEventoParaSaludo}. Esta propuesta ha sido cuidadosamente preparada para ${adultos} adulto(s) y ${ninos} niño(s) que se llevará a cabo el ${fechaFormateada} a las ${horaFormateada}. Esperamos que sea de su agrado.`;
+                const splitIntroText1 = doc.splitTextToSize(introText1, doc.internal.pageSize.width - 40);
+                doc.text(splitIntroText1, 20, yOffset);
+                yOffset += (splitIntroText1.length * 8 * 1.30) + 5; // Ajustar el espaciado
+
+                const introText2 = `Para cualquier consulta adicional o para confirmar, no dude en contactarnos al 8830-7837. Estamos a su entera disposición.`;
+                const splitIntroText2 = doc.splitTextToSize(introText2, doc.internal.pageSize.width - 40);
+                doc.text(splitIntroText2, 20, yOffset);
+                yOffset += (splitIntroText2.length * 8 * 1.30) + 15; // Espacio después del segundo párrafo
 
 
                 // Función para añadir una sección de menú al PDF
@@ -876,17 +881,17 @@
                         }
 
                         doc.setFont("Times-Roman", "bold"); // Fuente para títulos de sección
-                        doc.setFontSize(20 * 1.25); // Aumentar tamaño de subtítulo
+                        doc.setFontSize(20 * 1.20); // Aumentar tamaño de subtítulo en un 20%
                         doc.setTextColor(titleColor[0], titleColor[1], titleColor[2]); // Café oscuro para subtítulos
                         doc.text(title, 20, yOffset);
-                        yOffset += 10 * 1.25; // Ajustar espacio
+                        yOffset += 10 * 1.20; // Ajustar espacio
 
                         if (optionsText) {
                             doc.setFont("Times-Roman", "normal"); // Fuente para texto descriptivo
-                            doc.setFontSize(14 * 1.25); // Aumentar tamaño de fuente
+                            doc.setFontSize(14 * 1.20); // Aumentar tamaño de fuente en un 20%
                             doc.setTextColor(100, 100, 100); // Gris claro para texto secundario
                             doc.text(optionsText, 20, yOffset);
-                            yOffset += 7 * 1.25; // Ajustar espacio
+                            yOffset += 7 * 1.20; // Ajustar espacio
                         }
 
                         doc.autoTable({
@@ -895,8 +900,8 @@
                             body: data,
                             theme: 'striped',
                             styles: {
-                                fontSize: 14 * 1.25, // Aumentar tamaño de fuente en tabla
-                                cellPadding: 4 * 1.25, // Aumentar padding
+                                fontSize: 14 * 1.20, // Aumentar tamaño de fuente en tabla en un 20%
+                                cellPadding: 4 * 1.20, // Aumentar padding
                                 fillColor: bodyCellFillColor, // Salmón/crema para el cuerpo de la tabla
                                 textColor: [50, 50, 50],
                                 lineColor: [220, 220, 220], // Líneas más suaves
@@ -908,12 +913,12 @@
                                 fillColor: headerBgColor, // Café muy oscuro para encabezados
                                 textColor: headerTextColor, // Blanco para texto de encabezado
                                 fontStyle: 'bold',
-                                fontSize: 16 * 1.25, // Aumentar tamaño de fuente en encabezado
+                                fontSize: 16 * 1.20, // Aumentar tamaño de fuente en encabezado en un 20%
                                 font: "Times-Roman" // Usar Times-Roman para el encabezado de la tabla
                             },
                             margin: { left: 20, right: 20 },
                             didDrawPage: function (data) {
-                                yOffset = data.cursor.y + (15 * 1.25); // Actualizar yOffset después de cada tabla
+                                yOffset = data.cursor.y + (15 * 1.20); // Actualizar yOffset después de cada tabla
                             }
                         });
                     }
@@ -947,10 +952,10 @@
 
                 // Resumen de Invitados y Precios
                 doc.setFont("Times-Roman", "bold"); // Usar Times-Roman bold
-                doc.setFontSize(20 * 1.25); // Aumentar tamaño de título
+                doc.setFontSize(20 * 1.20); // Aumentar tamaño de título en un 20%
                 doc.setTextColor(titleColor[0], titleColor[1], titleColor[2]);
                 doc.text("Resumen de Invitados y Precios", 20, yOffset);
-                yOffset += 10 * 1.25;
+                yOffset += 10 * 1.20;
 
                 const precioAdulto = parseFloat(document.getElementById('precio-adulto').value);
                 const precioNino = parseFloat(document.getElementById('precio-nino').value || '0');
@@ -1023,8 +1028,8 @@
                     body: summaryData,
                     theme: 'grid',
                     styles: {
-                        fontSize: 14 * 1.25, // Aumentar tamaño de fuente para el resumen
-                        cellPadding: 4 * 1.25,
+                        fontSize: 14 * 1.20, // Aumentar tamaño de fuente para el resumen en un 20%
+                        cellPadding: 4 * 1.20,
                         textColor: [50, 50, 50],
                         lineColor: [220, 220, 220],
                         lineWidth: 0.1,
@@ -1050,8 +1055,8 @@
                     didDrawCell: function (data) {
                         // Dibujar la imagen de colones y el valor numérico
                         if (data.column.index === 1 && data.cell.isColonesImage && colonesSymbolBase64) {
-                            const imgWidth = 5; // mm, ajustar tamaño de la imagen del símbolo (más pequeño)
-                            const imgHeight = 5; // mm, ajustar tamaño de la imagen del símbolo (más pequeño)
+                            const imgWidth = 5; // mm, tamaño original de la imagen del símbolo
+                            const imgHeight = 5; // mm, tamaño original de la imagen del símbolo
                             const textPadding = 2; // Espacio entre la imagen y el texto
 
                             // Calcular posición de la imagen (alineada a la izquierda de la celda)
@@ -1068,13 +1073,13 @@
                         }
                     },
                     didDrawPage: function (data) {
-                        yOffset = data.cursor.y + (15 * 1.25);
+                        yOffset = data.cursor.y + (15 * 1.20);
                     }
                 });
 
                 // Notas o términos y condiciones (opcional)
                 doc.setFont("Times-Roman", "normal"); // Usar Times-Roman normal
-                doc.setFontSize(12 * 1.25); // Aumentar tamaño de fuente
+                doc.setFontSize(12 * 1.20); // Aumentar tamaño de fuente en un 20%
                 doc.setTextColor(100, 100, 100);
                 doc.text("Notas: Esta cotización es válida por 30 días. Precios sujetos a cambios.", 20, yOffset);
 
