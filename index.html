@@ -855,19 +855,19 @@
                 }
 
                 doc.setFont("Times-Roman", "normal"); // Usar Times-Roman para el texto
-                doc.setFontSize(14 * 1.30); // Aumentar tamaño de fuente del saludo en un 30%
+                doc.setFontSize(14 * 1.20); // Aumentar tamaño de fuente del saludo en un 20%
                 doc.setTextColor(70, 70, 70); // Gris medio
                 
                 // Construir el texto introductorio en dos párrafos
                 const introText1 = `Estimado ${cliente}: Nos complace presentarle nuestra cotización detallada para su ${tipoDeEventoParaSaludo}. Esta propuesta ha sido cuidadosamente preparada para ${adultos} adulto(s) y ${ninos} niño(s) que se llevará a cabo el ${fechaFormateada} a las ${horaFormateada}. Esperamos que sea de su agrado.`;
                 const splitIntroText1 = doc.splitTextToSize(introText1, doc.internal.pageSize.width - 40);
                 doc.text(splitIntroText1, 20, yOffset);
-                yOffset += (splitIntroText1.length * 8 * 1.30) + 5; // Ajustar el espaciado
+                yOffset += (splitIntroText1.length * 8 * 1.20) + 5; // Ajustar el espaciado
 
                 const introText2 = `Para cualquier consulta adicional o para confirmar, no dude en contactarnos al 8830-7837. Estamos a su entera disposición.`;
                 const splitIntroText2 = doc.splitTextToSize(introText2, doc.internal.pageSize.width - 40);
                 doc.text(splitIntroText2, 20, yOffset);
-                yOffset += (splitIntroText2.length * 8 * 1.30) + 15; // Espacio después del segundo párrafo
+                yOffset += (splitIntroText2.length * 8 * 1.20) + 15; // Espacio después del segundo párrafo
 
 
                 // Función para añadir una sección de menú al PDF
@@ -1055,8 +1055,8 @@
                     didDrawCell: function (data) {
                         // Dibujar la imagen de colones y el valor numérico
                         if (data.column.index === 1 && data.cell.isColonesImage && colonesSymbolBase64) {
-                            const imgWidth = 5; // mm, tamaño original de la imagen del símbolo
-                            const imgHeight = 5; // mm, tamaño original de la imagen del símbolo
+                            const imgWidth = 5 * 1.05; // Aumentar tamaño de la imagen del símbolo en un 5%
+                            const imgHeight = 5 * 1.05; // Aumentar tamaño de la imagen del símbolo en un 5%
                             const textPadding = 2; // Espacio entre la imagen y el texto
 
                             // Calcular posición de la imagen (alineada a la izquierda de la celda)
