@@ -112,10 +112,17 @@
             align-items: center;
             gap: 0.5rem;
         }
+        .time-input-group {
+            gap: 0.25rem; /* Espacio reducido para el grupo de tiempo */
+            flex-wrap: wrap; /* Permitir que los elementos se ajusten en pantallas pequeñas */
+        }
         .time-input-group input, .number-stepper input {
             width: 60px;
             text-align: center;
             -moz-appearance: textfield;
+        }
+        .time-input-group .number-stepper input {
+            width: 45px; /* Ancho reducido para los campos de hora/minuto */
         }
         .number-stepper input::-webkit-outer-spin-button,
         .number-stepper input::-webkit-inner-spin-button {
@@ -587,7 +594,7 @@
 
         // Opciones predefinidas para los menús
         let predefinedOptions = {
-            tipoEvento: ['Desayuno', 'Almuerzo', 'Cena', 'Café', 'Cumpleaños', 'Boda', 'Actividad Corporativa'],
+            tipoEvento: ['Desayuno', 'Almuerzo', 'Cena', 'Café', 'Cumpleaños', 'Boda', 'Actividad Corporativa', 'Despedida de Soltero', 'Fiesta de Bautizo', 'Fiesta de Revelación de Género', 'Aniversario de Bodas', 'Fiesta de Despedida', 'Fiesta de Bienvenida', 'Fiesta de Empresa', 'Fiesta de Quince Años', 'Fiesta de Graduación', 'Degustaciones Privadas', 'Evento Exclusivo', 'Baby Shower', 'Cena de Gala Corporativa', 'Capacitación', 'Lanzamiento de Producto', 'Renovación de Votos', 'Reunión de Alumnos', 'Propuesta de Matrimonio'],
             entradas: ['Ceviche de Pescado', 'Ceviche de Palmito y Pejibaye', 'Taquitos de la Casa', 'Sopa de Mariscos', 'Crema de pejibaye', 'Cóctel de Mejillones con ceviche', 'Sopa Azteca', 'Ensalada Antologías', 'Mejillones al ajillo', 'Patacones con Frijoles Molidos y Queso', 'Patacón con Ceviche', 'Canastas de Patacón', 'Mozzarella Sticks', 'Ensalada Capresse'],
             platoFuerte: ['Lomito en Salsa de Hongos con Arroz y Vegetales', 'Pollo a la Naranja con Arroz y Yuca al Mojo', 'Pollo a la Mernier con Vegetales y Papitas Salteadas', 'Salmón Antologías con Yuca al Mojo y Ensalada o Vegetales', 'Pechuga a la Parmesana con arroz y ensalada', 'Pechuga al la plancha con Arroz y Vegetales', 'Corvina a la Plancha con Puré de Papa', 'Filet de Pescado Con Salsa De Mariscos, Arroz y Vegetales', 'Pechuga en Salsa Hawaiana con Arroz y Vegetales', 'Camarones a La Caribeña con Arroz y Vegetales', 'Salmón Asiático con Arroz y Vegetales', 'Mariscada al Gusto con Arroz y Vegetales', 'Arroz con Mariscos, Papas Fritas y Ensalada', 'Arroz Antologías Papas Fritas y Ensalada', 'Arroz con Camarones, Papas Fritas y Ensalada', 'Herman Burger con Papas Fritas', 'Hamburguesa Antologías con Papas Fritas', 'Hamburguesa Sargento Pimienta, Papas Fritas y Ensalada', 'Pasta con Lomito y Pan de Ajo', 'Pasta con Pollo y Pan de Ajo', 'Pasta con Camarones y Pan de Ajo', 'Pasta en Salsa de Mariscos y Pan de Ajo', 'Pasta Thai y Pan de Ajo'],
             postres: ['Flan de Coco', 'Flan de Caramelo', 'Cheese Cake de Fresa', 'Pie de Limón', 'Torta Chilena'],
