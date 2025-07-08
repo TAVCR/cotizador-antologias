@@ -85,6 +85,11 @@
             color: #1F2937;
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
+        .form-group input:disabled, .stepper-btn:disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
         .form-group input[type="text"]:focus,
         .form-group input[type="date"]:focus,
         .form-group input[type="number"]:focus,
@@ -623,6 +628,11 @@
             const modalAddButton = document.getElementById('modal-add-button');
             const modalCloseButton = document.getElementById('modal-close-button');
             let currentCategory = '';
+            const tipoCalculoRadios = document.querySelectorAll('input[name="tipo-calculo"]');
+            const adultosInput = document.getElementById('adultos');
+            const ninosInput = document.getElementById('ninos');
+            const adultosStepper = adultosInput.closest('.number-stepper');
+            const ninosStepper = ninosInput.closest('.number-stepper');
 
             fontSizeSlider.addEventListener('input', function() {
                 fontSizeValueSpan.textContent = `${this.value}%`;
@@ -854,6 +864,28 @@
             });
             // --- FIN LÓGICA DE STEPPERS ---
 
+             // --- INICIO LÓGICA DE INVITADOS INDEFINIDOS ---
+             function handleTipoCalculoChange() {
+                const indefinido = document.getElementById('indefinido').checked;
+                const adultosInput = document.getElementById('adultos');
+                const ninosInput = document.getElementById('ninos');
+                const adultosStepper = adultosInput.closest('.number-stepper');
+                const ninosStepper = ninosInput.closest('.number-stepper');
+
+                adultosInput.disabled = indefinido;
+                ninosInput.disabled = indefinido;
+                adultosStepper.querySelectorAll('.stepper-btn').forEach(btn => btn.disabled = indefinido);
+                ninosStepper.querySelectorAll('.stepper-btn').forEach(btn => btn.disabled = indefinido);
+
+                if (indefinido) {
+                    adultosInput.value = '0';
+                    ninosInput.value = '0';
+                }
+            }
+
+            tipoCalculoRadios.forEach(radio => radio.addEventListener('change', handleTipoCalculoChange));
+            // --- FIN LÓGICA DE INVITADOS INDEFINIDOS ---
+
 
             incluirEntradasCheckbox.addEventListener('change', toggleMenuSections);
             incluirPostresCheckbox.addEventListener('change', toggleMenuSections);
@@ -862,6 +894,7 @@
             toggleMenuSections();
             initializeTables();
             updateAllSelects(); // Para poblar el select de tipo de evento inicialmente
+            handleTipoCalculoChange(); // Llamar al inicio para el estado inicial
             
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -911,46 +944,70 @@
                 const adultosVal = parseInt(document.getElementById('adultos').value) || 0;
                 const ninosVal = parseInt(document.getElementById('ninos').value) || 0;
 
-                if (adultosVal === 0 && ninosVal === 0) {
+                if (document.getElementById('definido').checked && adultosVal === 0 && ninosVal === 0) {
                     isValid = false;
                     showError('error-adultos', 'Debe haber al menos un adulto o un niño.');
                 }
 
                 // Validar selecciones de menú
                 const validateMenuTable = (tableId, errorId, isChecked, minRows = 1) => {
-                    if (!isChecked) return true;
+                    if (!isChecked && tableId !== 'tabla-plato-fuerte') return true;
+                    if (tableId === 'tabla-menu-ninos' && ninosVal <= 0 && document.getElementById('definido').checked) return true;
+
+
                     const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-                    if (rows.length < minRows) {
-                        showError(errorId, `Debe agregar al menos ${minRows} opción(es).`);
+                    const hasRows = rows.length > 0 && Array.from(rows).some(r => r.querySelector('select')?.value);
+                    
+                    if ( (isChecked || tableId === 'tabla-plato-fuerte') && !hasRows && minRows > 0) {
+                        showError(errorId, `Debe agregar y seleccionar al menos ${minRows} opción(es).`);
                         return false;
                     }
+                     if (tableId === 'tabla-menu-ninos' && ninosVal > 0 && !hasRows) {
+                         showError(errorId, `Debe agregar y seleccionar al menos 1 opción de menú para niños.`);
+                         return false;
+                     }
+
                     let allSelected = true;
+                    const selectedValues = [];
                     rows.forEach(row => {
                         const select = row.querySelector('select');
-                        if (!select || !select.value) {
-                            allSelected = false;
-                        } else if (select.value === 'custom') {
-                            const customInput = row.querySelector('.custom-option-input');
-                            if (!customInput || !customInput.value.trim()) {
-                                allSelected = false;
+                        let value = '';
+                        if (select && select.value) {
+                            if (select.value === 'custom') {
+                                const customInput = row.querySelector('.custom-option-input');
+                                if (!customInput || !customInput.value.trim()) {
+                                    allSelected = false;
+                                } else {
+                                    value = customInput.value.trim();
+                                }
+                            } else {
+                                value = select.value;
                             }
+                        } else {
+                             // Si hay una fila, debe tener una selección
+                            if (rows.length > 0) allSelected = false;
+                        }
+
+                        if (value) {
+                            if (selectedValues.includes(value)) {
+                                allSelected = false;
+                                showError(errorId, 'No se pueden seleccionar opciones repetidas.');
+                            }
+                            selectedValues.push(value);
                         }
                     });
-                    if (!allSelected) {
+                    if (!allSelected && !document.querySelector(`#${errorId}`).textContent) {
                         showError(errorId, 'Por favor, seleccione o especifique una opción en cada fila.');
-                        return false;
                     }
-                    return true;
+                    return allSelected;
                 };
 
                 if (!validateMenuTable('tabla-entradas', 'error-entradas', incluirEntradasCheckbox.checked)) isValid = false;
                 if (!validateMenuTable('tabla-plato-fuerte', 'error-plato-fuerte', true, 1)) isValid = false;
                 if (!validateMenuTable('tabla-postres', 'error-postres', incluirPostresCheckbox.checked)) isValid = false;
                 if (!validateMenuTable('tabla-bebidas', 'error-bebidas', incluirBebidasCheckbox.checked)) isValid = false;
+                if (!validateMenuTable('tabla-menu-ninos', 'error-menu-ninos', true, 0)) isValid = false;
 
-                if (ninosVal > 0) {
-                    if (!validateMenuTable('tabla-menu-ninos', 'error-menu-ninos', true, 1)) isValid = false;
-                }
 
                 return isValid;
             }
@@ -1035,7 +1092,8 @@
                 doc.setFontSize(14 * fontMultiplier);
                 doc.setTextColor(70, 70, 70);
                 
-                const introText1 = `Estimado ${cliente}: Nos complace presentarle nuestra cotización detallada para su ${tipoDeEventoParaSaludo}. Esta propuesta ha sido cuidadosamente preparada para ${adultos} adulto(s) y ${ninos} niño(s) que se llevará a cabo el ${fechaFormateada} a las ${horaFormateada}. Esperamos que sea de su agrado.`;
+                const indefinido = document.getElementById('indefinido').checked;
+                const introText1 = `Estimado ${cliente}: Nos complace presentarle nuestra cotización detallada para su ${tipoDeEventoParaSaludo}. Esta propuesta ha sido cuidadosamente preparada${indefinido ? '' : ` para ${adultos} adulto(s) y ${ninos} niño(s)`} que se llevará a cabo el ${fechaFormateada} a las ${horaFormateada}. Esperamos que sea de su agrado.`;
                 doc.text(introText1, 20, yOffset, { maxWidth: doc.internal.pageSize.width - 40, align: 'justify' });
                 yOffset += doc.getTextDimensions(introText1, { maxWidth: doc.internal.pageSize.width - 40 }).h + (4 * fontMultiplier);
 
@@ -1125,7 +1183,9 @@
                 addMenuSection('Plato Fuerte', 'tabla-plato-fuerte', '(Elija una Opción)');
                 if (incluirPostresCheckbox.checked) addMenuSection('Postres', 'tabla-postres', '(Elija una Opción)');
                 if (incluirBebidasCheckbox.checked) addMenuSection('Bebidas', 'tabla-bebidas', `(Elija ${document.getElementById('cuantas-bebidas').value} bebidas)`);
-                if (ninos > 0 && getTableData('tabla-menu-ninos').length > 0) addMenuSection('Menú para Niños', 'tabla-menu-ninos', '(Elija una Opción - Incluye una bebida y un postre)');
+                if (ninos > 0 || (document.getElementById('indefinido').checked && getTableData('tabla-menu-ninos').length > 0)) {
+                    addMenuSection('Menú para Niños', 'tabla-menu-ninos', '(Elija una Opción - Incluye una bebida y un postre)');
+                }
 
 
                 doc.addPage();
@@ -1142,12 +1202,7 @@
                 const moneda = document.querySelector('input[name="moneda"]:checked').value;
                 const tipoCambio = parseFloat(document.getElementById('tipo-cambio').value) || 1;
 
-                let totalAdultos = adultos * precioAdulto;
-                let totalNinos = ninos * precioNino;
-                let subtotal = totalAdultos + totalNinos;
-                const impuestoVentas = subtotal * 0.10;
-                const impuestoServicio = subtotal * 0.13;
-                let totalFinal = subtotal + impuestoVentas + impuestoServicio;
+                let summaryData;
 
                 const formatCurrency = (value) => {
                     const finalValue = moneda === 'USD' ? value / tipoCambio : value;
@@ -1157,9 +1212,25 @@
                     return `$ ${formattedValue}`;
                 };
 
-                const summaryData = [['Número de Adultos:', adultos], ['Precio por Adulto:', formatCurrency(precioAdulto)], ['Total Adultos:', formatCurrency(totalAdultos)]];
-                if (ninos > 0) summaryData.push(['Número de Niños:', ninos], ['Precio por Niño:', formatCurrency(precioNino)], ['Total Niños:', formatCurrency(totalNinos)]);
-                summaryData.push(['Subtotal:', formatCurrency(subtotal)], ['Impuesto de Ventas (10%):', formatCurrency(impuestoVentas)], ['Impuesto de Servicio (13%):', formatCurrency(impuestoServicio)], ['TOTAL FINAL:', formatCurrency(totalFinal)]);
+                if (document.getElementById('indefinido').checked) {
+                    const precioAdultoConImpuestos = precioAdulto * 1.23;
+                    const precioNinoConImpuestos = precioNino * 1.23;
+                    summaryData = [['Precio por Adulto (imp. incl.):', formatCurrency(precioAdultoConImpuestos)]];
+                    if (precioNino > 0) {
+                        summaryData.push(['Precio por Niño (imp. incl.):', formatCurrency(precioNinoConImpuestos)]);
+                    }
+                } else {
+                    let totalAdultos = adultos * precioAdulto;
+                    let totalNinos = ninos * precioNino;
+                    let subtotal = totalAdultos + totalNinos;
+                    const impuestoVentas = subtotal * 0.10;
+                    const impuestoServicio = subtotal * 0.13;
+                    let totalFinal = subtotal + impuestoVentas + impuestoServicio;
+
+                    summaryData = [['Número de Adultos:', adultos], ['Precio por Adulto:', formatCurrency(precioAdulto)], ['Total Adultos:', formatCurrency(totalAdultos)]];
+                    if (ninos > 0) summaryData.push(['Número de Niños:', ninos], ['Precio por Niño:', formatCurrency(precioNino)], ['Total Niños:', formatCurrency(totalNinos)]);
+                    summaryData.push(['Subtotal:', formatCurrency(subtotal)], ['Impuesto de Ventas (10%):', formatCurrency(impuestoVentas)], ['Impuesto de Servicio (13%):', formatCurrency(impuestoServicio)], ['TOTAL FINAL:', formatCurrency(totalFinal)]);
+                }
 
                 doc.autoTable({
                     startY: yOffset,
@@ -1181,7 +1252,7 @@
                     bodyStyles: { fillColor: bodyCellFillColor },
                     margin: { left: 20, right: 20 },
                     didParseCell: (data) => {
-                        if (data.row.index === summaryData.length - 1) {
+                        if (document.getElementById('definido').checked && data.row.index === summaryData.length - 1) {
                             data.cell.styles.fontStyle = 'bold';
                             data.cell.styles.fontSize = (14 * fontMultiplier) * 1.25;
                         }
@@ -1194,7 +1265,7 @@
                     didDrawCell: (data) => {
                         if (data.column.index === 1 && data.cell.isColonesImage && colonesSymbolBase64) {
                             let imgSize = 5 * fontMultiplier;
-                             if (data.row.index === summaryData.length - 1) {
+                             if (document.getElementById('definido').checked && data.row.index === summaryData.length - 1) {
                                 imgSize *= 1.25;
                             }
                             const textPadding = 2;
