@@ -107,14 +107,32 @@
             padding: 0;
             background-color: transparent;
         }
-        .time-input-group {
+        .time-input-group, .number-stepper {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        .time-input-group input {
+        .time-input-group input, .number-stepper input {
             width: 60px;
             text-align: center;
+            -moz-appearance: textfield;
+        }
+        .number-stepper input::-webkit-outer-spin-button,
+        .number-stepper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .stepper-btn {
+            width: 2rem;
+            height: 2rem;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            font-weight: bold;
+            color: #4b5563;
+            cursor: pointer;
+        }
+        .stepper-btn:hover {
+            background-color: #d1d5db;
         }
         .time-input-group span {
             font-size: 1.25rem;
@@ -332,9 +350,17 @@
                     <div class="form-group">
                         <label for="hora">Hora del Evento:</label>
                         <div class="time-input-group">
-                            <input type="number" id="hora-h" min="1" max="12" placeholder="HH" required class="rounded-md">
+                            <div class="number-stepper">
+                                <button type="button" class="stepper-btn minus-btn">-</button>
+                                <input type="text" id="hora-h" inputmode="numeric" pattern="[1-9]|1[0-2]" value="12" class="rounded-md">
+                                <button type="button" class="stepper-btn plus-btn">+</button>
+                            </div>
                             <span>:</span>
-                            <input type="number" id="hora-m" min="0" max="59" value="00" placeholder="MM" required class="rounded-md">
+                            <div class="number-stepper">
+                                <button type="button" class="stepper-btn minus-btn">-</button>
+                                <input type="text" id="hora-m" inputmode="numeric" pattern="[0-5]?[0-9]" value="00" class="rounded-md">
+                                <button type="button" class="stepper-btn plus-btn">+</button>
+                            </div>
                             <select id="hora-ampm" class="rounded-md">
                                 <option value="AM">AM</option>
                                 <option value="PM">PM</option>
@@ -377,7 +403,11 @@
             <div id="opciones-entradas-group" class="form-group">
                 <label class="category-label">Entradas <button type="button" class="manage-options-button" data-category="entradas" data-title="Entradas">Administrar Opciones</button></label>
                 <label for="cuantas-entradas">¿Cuántas entradas a elegir?</label>
-                <input type="number" id="cuantas-entradas" min="1" value="1" class="small-input rounded-md">
+                <div class="number-stepper">
+                    <button type="button" class="stepper-btn minus-btn">-</button>
+                    <input type="text" id="cuantas-entradas" inputmode="numeric" pattern="[1-9][0-9]*" value="1" class="small-input rounded-md">
+                    <button type="button" class="stepper-btn plus-btn">+</button>
+                </div>
                 <table id="tabla-entradas" class="options-table">
                     <thead>
                         <tr>
@@ -424,7 +454,11 @@
             <div id="opciones-bebidas-group" class="form-group">
                 <label id="label-bebidas" class="category-label">Bebidas (elija cuántas y cuáles) <button type="button" class="manage-options-button" data-category="bebidas" data-title="Bebidas">Administrar Opciones</button></label>
                 <label for="cuantas-bebidas">¿Cuántas bebidas a elegir?</label>
-                <input type="number" id="cuantas-bebidas" min="1" value="1" class="small-input rounded-md">
+                <div class="number-stepper">
+                     <button type="button" class="stepper-btn minus-btn">-</button>
+                    <input type="text" id="cuantas-bebidas" inputmode="numeric" pattern="[1-9][0-9]*" value="1" class="small-input rounded-md">
+                    <button type="button" class="stepper-btn plus-btn">+</button>
+                </div>
                 <table id="tabla-bebidas" class="options-table">
                     <thead>
                         <tr>
@@ -467,12 +501,20 @@
             <div id="numeros-definidos" class="form-group-split">
                 <div class="form-group">
                     <label for="adultos">Número de Adultos:</label>
-                    <input type="number" id="adultos" min="0" value="0" step="1" class="rounded-md">
+                     <div class="number-stepper">
+                        <button type="button" class="stepper-btn minus-btn">-</button>
+                        <input type="text" id="adultos" inputmode="numeric" pattern="[0-9]*" value="0" class="rounded-md">
+                        <button type="button" class="stepper-btn plus-btn">+</button>
+                    </div>
                     <div class="error-message" id="error-adultos">El número de adultos debe ser un entero no negativo.</div>
                 </div>
                 <div class="form-group">
                     <label for="ninos">Número de Niños:</label>
-                    <input type="number" id="ninos" min="0" value="0" step="1" class="rounded-md">
+                    <div class="number-stepper">
+                        <button type="button" class="stepper-btn minus-btn">-</button>
+                        <input type="text" id="ninos" inputmode="numeric" pattern="[0-9]*" value="0" class="rounded-md">
+                        <button type="button" class="stepper-btn plus-btn">+</button>
+                    </div>
                     <div class="error-message" id="error-ninos">El número de niños debe ser un entero no negativo.</div>
                 </div>
             </div>
@@ -544,7 +586,7 @@
         const bodyCellFillColor = [250, 245, 235];
 
         // Opciones predefinidas para los menús
-        const predefinedOptions = {
+        let predefinedOptions = {
             tipoEvento: ['Desayuno', 'Almuerzo', 'Cena', 'Café', 'Cumpleaños', 'Boda', 'Actividad Corporativa'],
             entradas: ['Ceviche de Pescado', 'Ceviche de Palmito y Pejibaye', 'Taquitos de la Casa', 'Sopa de Mariscos', 'Crema de pejibaye', 'Cóctel de Mejillones con ceviche', 'Sopa Azteca', 'Ensalada Antologías', 'Mejillones al ajillo', 'Patacones con Frijoles Molidos y Queso'],
             platoFuerte: ['Lomito en Salsa de Hongos con Arroz y Vegetales', 'Pollo a la Naranja con Arroz y Yuca al Mojo', 'Pollo a la Mernier con Vegetales y Papitas Salteadas', 'Salmón Antologías con Yuca al Mojo y Ensalada o Vegetales', 'Pechuga a la Parmesana con arroz y ensalada', 'Pechuga al la plancha con Arroz y Vegetales', 'Corvina a la Plancha con Puré de Papa'],
@@ -554,6 +596,12 @@
         };
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Cargar opciones desde localStorage
+            const savedOptions = localStorage.getItem('cotizacionPredefinedOptions');
+            if (savedOptions) {
+                predefinedOptions = JSON.parse(savedOptions);
+            }
+
             // Referencias a elementos del DOM
             const form = document.getElementById('cotizacion-form');
             const incluirEntradasCheckbox = document.getElementById('incluir-entradas');
@@ -631,6 +679,10 @@
             });
 
             // --- INICIO LÓGICA DE MODAL ---
+            function saveOptionsToLocalStorage() {
+                localStorage.setItem('cotizacionPredefinedOptions', JSON.stringify(predefinedOptions));
+            }
+
             function populateModal(category, title) {
                 currentCategory = category;
                 modalTitle.textContent = `Administrar ${title}`;
@@ -659,6 +711,7 @@
                             const newText = input.value.trim();
                             if (newText) {
                                 predefinedOptions[category][index] = newText;
+                                saveOptionsToLocalStorage();
                                 populateModal(category, title);
                                 updateAllSelects();
                             }
@@ -674,6 +727,7 @@
                     deleteBtn.className = 'bg-red-500 text-white px-2 py-1 rounded-md text-xs ml-2';
                     deleteBtn.onclick = () => {
                         predefinedOptions[category].splice(index, 1);
+                        saveOptionsToLocalStorage();
                         populateModal(category, title);
                         updateAllSelects();
                     };
@@ -690,6 +744,7 @@
                 const newOption = modalNewOptionInput.value.trim();
                 if (newOption && !predefinedOptions[currentCategory].includes(newOption)) {
                     predefinedOptions[currentCategory].push(newOption);
+                    saveOptionsToLocalStorage();
                     populateModal(currentCategory, modalTitle.textContent.replace('Administrar ', ''));
                     updateAllSelects();
                     modalNewOptionInput.value = '';
@@ -751,6 +806,46 @@
                 });
             }
             // --- FIN LÓGICA DE MODAL ---
+
+            // --- INICIO LÓGICA DE STEPPERS ---
+            document.querySelectorAll('.number-stepper').forEach(stepper => {
+                const input = stepper.querySelector('input[type="text"]');
+                const minusBtn = stepper.querySelector('.minus-btn');
+                const plusBtn = stepper.querySelector('.plus-btn');
+
+                minusBtn.addEventListener('click', () => {
+                    let currentValue = parseInt(input.value, 10);
+                    if (isNaN(currentValue)) currentValue = 0;
+
+                    let min = (input.id === 'cuantas-entradas' || input.id === 'cuantas-bebidas' || input.id === 'hora-h') ? 1 : 0;
+                    
+                    if (input.id === 'hora-h') {
+                        currentValue = currentValue === 1 ? 12 : currentValue - 1;
+                    } else if (input.id === 'hora-m') {
+                        currentValue = currentValue === 0 ? 59 : currentValue - 1;
+                    } else {
+                        currentValue = Math.max(min, currentValue - 1);
+                    }
+
+                    input.value = input.id === 'hora-m' ? currentValue.toString().padStart(2, '0') : currentValue;
+                });
+
+                plusBtn.addEventListener('click', () => {
+                    let currentValue = parseInt(input.value, 10);
+                    if (isNaN(currentValue)) currentValue = 0;
+                    
+                    if (input.id === 'hora-h') {
+                        currentValue = currentValue === 12 ? 1 : currentValue + 1;
+                    } else if (input.id === 'hora-m') {
+                        currentValue = currentValue === 59 ? 0 : currentValue + 1;
+                    } else {
+                        currentValue++;
+                    }
+                    
+                    input.value = input.id === 'hora-m' ? currentValue.toString().padStart(2, '0') : currentValue;
+                });
+            });
+            // --- FIN LÓGICA DE STEPPERS ---
 
 
             incluirEntradasCheckbox.addEventListener('change', toggleMenuSections);
