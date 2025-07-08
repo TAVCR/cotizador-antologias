@@ -29,6 +29,7 @@
             width: 100%;
             max-width: 800px;
             margin-top: 2rem;
+            overflow: hidden; /* Para contener los fondos de color */
         }
         h1 {
             font-family: 'Merriweather', serif;
@@ -40,12 +41,37 @@
         }
         .form-group {
             margin-bottom: 1.5rem;
+            padding: 1.5rem 1rem;
+        }
+        /* Color de fondo intercalado para las secciones */
+        .form-group:nth-of-type(odd) {
+             background-color: #FEFBEB; /* Un color crema más fuerte */
+             margin-left: -2.5rem;
+             margin-right: -2.5rem;
+             padding-left: 2.5rem;
+             padding-right: 2.5rem;
+             border-top: 1px solid #e5e7eb;
+             border-bottom: 1px solid #e5e7eb;
+        }
+        .form-group:first-of-type {
+            padding-top: 0;
+            border-top: none;
+            background-color: transparent;
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 0;
+            padding-right: 0;
         }
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
             color: #374151;
+        }
+        .category-label {
+            font-family: 'Merriweather', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
         }
         .form-group input[type="text"],
         .form-group input[type="date"],
@@ -71,10 +97,15 @@
             display: flex;
             gap: 1.5rem;
             margin-bottom: 1.5rem;
+            border-top: none;
+            padding-top: 0;
         }
         .form-group-split > .form-group {
             flex: 1;
             margin-bottom: 0;
+            border-top: none;
+            padding: 0;
+            background-color: transparent;
         }
         .time-input-group {
             display: flex;
@@ -111,7 +142,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
-            background-color: #f9fafb;
+            background-color: #ffffff;
             border-radius: 0.5rem;
             overflow: hidden;
         }
@@ -192,6 +223,68 @@
             width: 80px;
             text-align: center;
         }
+        .manage-options-button {
+            background-color: #6b7280;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            border-radius: 9999px;
+            margin-left: 1rem;
+            vertical-align: middle;
+        }
+        .manage-options-button:hover {
+            background-color: #4b5563;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+        }
+        .modal-list {
+            list-style: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+        .modal-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .modal-list li:last-child {
+            border-bottom: none;
+        }
+        .modal-list .edit-button {
+            background-color: #3b82f6;
+            margin-left: auto;
+            margin-right: 0.5rem;
+        }
+        .modal-list .edit-button:hover {
+            background-color: #2563eb;
+        }
+        .modal-list .save-button {
+            background-color: #22c55e;
+        }
+        .modal-list .save-button:hover {
+            background-color: #16a34a;
+        }
 
         /* Responsividad para pantallas pequeñas */
         @media (max-width: 768px) {
@@ -229,39 +322,34 @@
                 <input type="text" id="cliente" required class="rounded-md">
                 <div class="error-message" id="error-cliente">El nombre del cliente es obligatorio.</div>
             </div>
-            <div class="form-group-split">
-                <div class="form-group">
-                    <label for="fecha">Fecha del Evento:</label>
-                    <input type="date" id="fecha" required class="rounded-md">
-                    <div class="error-message" id="error-fecha">La fecha del evento es obligatoria.</div>
-                </div>
-                <div class="form-group">
-                    <label for="hora">Hora del Evento:</label>
-                    <div class="time-input-group">
-                        <input type="number" id="hora-h" min="1" max="12" placeholder="HH" required class="rounded-md">
-                        <span>:</span>
-                        <input type="number" id="hora-m" min="0" max="59" value="00" placeholder="MM" required class="rounded-md">
-                        <select id="hora-ampm" class="rounded-md">
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                        </select>
+            <div class="form-group">
+                <div class="form-group-split">
+                    <div class="form-group">
+                        <label for="fecha">Fecha del Evento:</label>
+                        <input type="date" id="fecha" required class="rounded-md">
+                        <div class="error-message" id="error-fecha">La fecha del evento es obligatoria.</div>
                     </div>
-                    <div class="error-message" id="error-hora">La hora del evento es obligatoria.</div>
+                    <div class="form-group">
+                        <label for="hora">Hora del Evento:</label>
+                        <div class="time-input-group">
+                            <input type="number" id="hora-h" min="1" max="12" placeholder="HH" required class="rounded-md">
+                            <span>:</span>
+                            <input type="number" id="hora-m" min="0" max="59" value="00" placeholder="MM" required class="rounded-md">
+                            <select id="hora-ampm" class="rounded-md">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
+                        <div class="error-message" id="error-hora">La hora del evento es obligatoria.</div>
+                    </div>
                 </div>
             </div>
 
             <!-- Nuevo campo: Tipo de Evento -->
             <div class="form-group">
-                <label for="tipo-evento">Tipo de Evento:</label>
+                <label for="tipo-evento" class="category-label">Tipo de Evento: <button type="button" class="manage-options-button" data-category="tipoEvento" data-title="Tipos de Evento">Administrar Opciones</button></label>
                 <select id="tipo-evento" class="rounded-md" required>
                     <option value="">Seleccione el tipo de evento</option>
-                    <option value="Desayuno">Desayuno</option>
-                    <option value="Almuerzo">Almuerzo</option>
-                    <option value="Cena">Cena</option>
-                    <option value="Café">Café</option>
-                    <option value="Cumpleaños">Cumpleaños</option>
-                    <option value="Boda">Boda</option>
-                    <option value="Actividad Corporativa">Actividad Corporativa</option>
                     <option value="Otros">Otros</option>
                 </select>
                 <div class="error-message" id="error-tipo-evento">El tipo de evento es obligatorio.</div>
@@ -287,7 +375,7 @@
 
             <!-- Secciones de Opciones del Menú -->
             <div id="opciones-entradas-group" class="form-group">
-                <label>Entradas (elija cuántas y cuáles):</label>
+                <label class="category-label">Entradas <button type="button" class="manage-options-button" data-category="entradas" data-title="Entradas">Administrar Opciones</button></label>
                 <label for="cuantas-entradas">¿Cuántas entradas a elegir?</label>
                 <input type="number" id="cuantas-entradas" min="1" value="1" class="small-input rounded-md">
                 <table id="tabla-entradas" class="options-table">
@@ -297,16 +385,14 @@
                             <th class="w-24"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Las filas de opciones se agregarán aquí -->
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <button type="button" class="add-row-button" data-table="tabla-entradas">Agregar Nueva Opción</button>
                 <div class="error-message" id="error-entradas">Debe agregar al menos una opción de entrada.</div>
             </div>
 
             <div class="form-group">
-                <label>Plato Fuerte (opciones excluyentes):</label>
+                <label class="category-label">Plato Fuerte (opciones excluyentes) <button type="button" class="manage-options-button" data-category="platoFuerte" data-title="Platos Fuertes">Administrar Opciones</button></label>
                 <table id="tabla-plato-fuerte" class="options-table">
                     <thead>
                         <tr>
@@ -314,16 +400,14 @@
                             <th class="w-24"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Las filas se agregarán dinámicamente -->
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <button type="button" class="add-row-button" data-table="tabla-plato-fuerte">Agregar Nueva Opción</button>
-                <div class="error-message" id="error-plato-fuerte">Debe agregar al menos dos opciones de plato fuerte.</div>
+                <div class="error-message" id="error-plato-fuerte">Debe agregar al menos una opción de plato fuerte.</div>
             </div>
 
             <div id="opciones-postres-group" class="form-group">
-                <label>Postres (opciones excluyentes):</label>
+                <label class="category-label">Postres (opciones excluyentes) <button type="button" class="manage-options-button" data-category="postres" data-title="Postres">Administrar Opciones</button></label>
                 <table id="tabla-postres" class="options-table">
                     <thead>
                         <tr>
@@ -331,16 +415,14 @@
                             <th class="w-24"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Las filas se agregarán dinámicamente -->
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <button type="button" class="add-row-button" data-table="tabla-postres">Agregar Nueva Opción</button>
                 <div class="error-message" id="error-postres">Debe agregar al menos una opción de postre.</div>
             </div>
 
             <div id="opciones-bebidas-group" class="form-group">
-                <label id="label-bebidas">Bebidas (elija cuántas y cuáles):</label>
+                <label id="label-bebidas" class="category-label">Bebidas (elija cuántas y cuáles) <button type="button" class="manage-options-button" data-category="bebidas" data-title="Bebidas">Administrar Opciones</button></label>
                 <label for="cuantas-bebidas">¿Cuántas bebidas a elegir?</label>
                 <input type="number" id="cuantas-bebidas" min="1" value="1" class="small-input rounded-md">
                 <table id="tabla-bebidas" class="options-table">
@@ -350,16 +432,14 @@
                             <th class="w-24"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Las filas se agregarán dinámicamente -->
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <button type="button" class="add-row-button" data-table="tabla-bebidas">Agregar Nueva Opción</button>
                 <div class="error-message" id="error-bebidas">Debe agregar al menos una opción de bebida.</div>
             </div>
             
             <div class="form-group">
-                <label>Menú para Niños (si aplica):</label>
+                <label class="category-label">Menú para Niños (si aplica) <button type="button" class="manage-options-button" data-category="menuNinos" data-title="Menú para Niños">Administrar Opciones</button></label>
                 <table id="tabla-menu-ninos" class="options-table">
                     <thead>
                         <tr>
@@ -367,9 +447,7 @@
                             <th class="w-24"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Las filas se agregarán dinámicamente -->
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <button type="button" class="add-row-button" data-table="tabla-menu-ninos">Agregar Nueva Opción</button>
                 <div class="error-message" id="error-menu-ninos">Debe agregar al menos una opción de menú para niños si hay niños.</div>
@@ -389,13 +467,13 @@
             <div id="numeros-definidos" class="form-group-split">
                 <div class="form-group">
                     <label for="adultos">Número de Adultos:</label>
-                    <input type="number" id="adultos" min="0" value="0" class="rounded-md">
-                    <div class="error-message" id="error-adultos">El número de adultos debe ser un número positivo.</div>
+                    <input type="number" id="adultos" min="0" value="0" step="1" class="rounded-md">
+                    <div class="error-message" id="error-adultos">El número de adultos debe ser un entero no negativo.</div>
                 </div>
                 <div class="form-group">
                     <label for="ninos">Número de Niños:</label>
-                    <input type="number" id="ninos" min="0" value="0" class="rounded-md">
-                    <div class="error-message" id="error-ninos">El número de niños debe ser un número positivo.</div>
+                    <input type="number" id="ninos" min="0" value="0" step="1" class="rounded-md">
+                    <div class="error-message" id="error-ninos">El número de niños debe ser un entero no negativo.</div>
                 </div>
             </div>
 
@@ -438,6 +516,20 @@
             <button type="submit">Generar Cotización en PDF</button>
         </form>
     </div>
+
+    <!-- Modal para administrar opciones -->
+    <div id="options-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 id="modal-title" class="text-2xl font-bold mb-4" style="font-family: 'Merriweather', serif;"></h2>
+            <ul id="modal-list" class="modal-list"></ul>
+            <div class="mt-4 flex gap-2">
+                <input type="text" id="modal-new-option" class="flex-grow p-2 border rounded-md" placeholder="Nueva opción...">
+                <button type="button" id="modal-add-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">Agregar</button>
+            </div>
+            <button type="button" id="modal-close-button" class="mt-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md w-full">Cerrar</button>
+        </div>
+    </div>
+
     <!-- Carga de las librerías jsPDF y jspdf-autotable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
@@ -453,9 +545,10 @@
 
         // Opciones predefinidas para los menús
         const predefinedOptions = {
-            entradas: ['Ceviche de Pescado', 'Ceviche de Palmito y Pejibaye', 'Taquitos de la Casa', 'Sopa de Mariscos', 'Crema de pejibaye', 'Cóctel de Mejillones con ceviche', 'Sopa Azteca', 'Ensalada Antologías', 'Mejillones al ajillo'],
-            platoFuerte: ['Lomito en Salsa de Hongos con Arroz y Vegetales', 'Pollo a la Naranja con Arroz y Yuca al Mojo', 'Pollo a la Mernier con Vegetales y Papitas Salteadas', 'Salmón Antologías con Yuca al Mojo y Ensalada o Vegetales', 'Pechuga a la Parmesana con arroz y ensalada', 'Pechuga al la plancha con Arroz y Vegetales'],
-            postres: ['Flan de Coco', 'Flan de Caramelo', 'Cheese Cake de Fresa', 'Pie de Limón'],
+            tipoEvento: ['Desayuno', 'Almuerzo', 'Cena', 'Café', 'Cumpleaños', 'Boda', 'Actividad Corporativa'],
+            entradas: ['Ceviche de Pescado', 'Ceviche de Palmito y Pejibaye', 'Taquitos de la Casa', 'Sopa de Mariscos', 'Crema de pejibaye', 'Cóctel de Mejillones con ceviche', 'Sopa Azteca', 'Ensalada Antologías', 'Mejillones al ajillo', 'Patacones con Frijoles Molidos y Queso'],
+            platoFuerte: ['Lomito en Salsa de Hongos con Arroz y Vegetales', 'Pollo a la Naranja con Arroz y Yuca al Mojo', 'Pollo a la Mernier con Vegetales y Papitas Salteadas', 'Salmón Antologías con Yuca al Mojo y Ensalada o Vegetales', 'Pechuga a la Parmesana con arroz y ensalada', 'Pechuga al la plancha con Arroz y Vegetales', 'Corvina a la Plancha con Puré de Papa'],
+            postres: ['Flan de Coco', 'Flan de Caramelo', 'Cheese Cake de Fresa', 'Pie de Limón', 'Tres Leches'],
             bebidas: ['Refresco Natural', 'Refresco Gaseoso', 'Cerveza', 'Trago de la Casa'],
             menuNinos: ['Nuggets de Pollo', 'Hamburguesa para Niños', 'Dedos de Pescado', 'Spaguetti']
         };
@@ -468,6 +561,13 @@
             const incluirBebidasCheckbox = document.getElementById('incluir-bebidas');
             const fontSizeSlider = document.getElementById('font-size-adjust');
             const fontSizeValueSpan = document.getElementById('font-size-value');
+            const modal = document.getElementById('options-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalList = document.getElementById('modal-list');
+            const modalNewOptionInput = document.getElementById('modal-new-option');
+            const modalAddButton = document.getElementById('modal-add-button');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            let currentCategory = '';
 
             fontSizeSlider.addEventListener('input', function() {
                 fontSizeValueSpan.textContent = `${this.value}%`;
@@ -530,21 +630,228 @@
                 });
             });
 
+            // --- INICIO LÓGICA DE MODAL ---
+            function populateModal(category, title) {
+                currentCategory = category;
+                modalTitle.textContent = `Administrar ${title}`;
+                modalList.innerHTML = '';
+                predefinedOptions[category].forEach((option, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>${option}</span>`;
+
+                    const btnContainer = document.createElement('div');
+
+                    const editBtn = document.createElement('button');
+                    editBtn.textContent = 'Editar';
+                    editBtn.className = 'edit-button bg-blue-500 text-white px-2 py-1 rounded-md text-xs';
+                    editBtn.onclick = () => {
+                        const span = li.querySelector('span');
+                        const currentText = span.textContent;
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = currentText;
+                        input.className = 'flex-grow p-1 border rounded-md';
+                        
+                        const saveBtn = document.createElement('button');
+                        saveBtn.textContent = 'Guardar';
+                        saveBtn.className = 'save-button bg-green-500 text-white px-2 py-1 rounded-md text-xs ml-2';
+                        saveBtn.onclick = () => {
+                            const newText = input.value.trim();
+                            if (newText) {
+                                predefinedOptions[category][index] = newText;
+                                populateModal(category, title);
+                                updateAllSelects();
+                            }
+                        };
+                        
+                        li.innerHTML = '';
+                        li.appendChild(input);
+                        li.appendChild(saveBtn);
+                    };
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Eliminar';
+                    deleteBtn.className = 'bg-red-500 text-white px-2 py-1 rounded-md text-xs ml-2';
+                    deleteBtn.onclick = () => {
+                        predefinedOptions[category].splice(index, 1);
+                        populateModal(category, title);
+                        updateAllSelects();
+                    };
+
+                    btnContainer.appendChild(editBtn);
+                    btnContainer.appendChild(deleteBtn);
+                    li.appendChild(btnContainer);
+                    modalList.appendChild(li);
+                });
+                modal.style.display = 'flex';
+            }
+
+            modalAddButton.onclick = () => {
+                const newOption = modalNewOptionInput.value.trim();
+                if (newOption && !predefinedOptions[currentCategory].includes(newOption)) {
+                    predefinedOptions[currentCategory].push(newOption);
+                    populateModal(currentCategory, modalTitle.textContent.replace('Administrar ', ''));
+                    updateAllSelects();
+                    modalNewOptionInput.value = '';
+                }
+            };
+
+            modalCloseButton.onclick = () => {
+                modal.style.display = 'none';
+            };
+
+            document.querySelectorAll('.manage-options-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    const title = this.dataset.title;
+                    populateModal(category, title);
+                });
+            });
+
+            function updateAllSelects() {
+                document.querySelectorAll('select').forEach(select => {
+                    // Actualizar selects de tablas de menú
+                    const table = select.closest('.options-table');
+                    if (table) {
+                        const tableId = table.id;
+                        let optionsKey;
+                         switch (tableId) {
+                            case 'tabla-entradas': optionsKey = 'entradas'; break;
+                            case 'tabla-plato-fuerte': optionsKey = 'platoFuerte'; break;
+                            case 'tabla-postres': optionsKey = 'postres'; break;
+                            case 'tabla-bebidas': optionsKey = 'bebidas'; break;
+                            case 'tabla-menu-ninos': optionsKey = 'menuNinos'; break;
+                        }
+                        if (optionsKey) {
+                            const currentVal = select.value;
+                            const options = predefinedOptions[optionsKey];
+                            select.innerHTML = `<option value="" disabled>Seleccione una opción...</option>`;
+                            options.forEach(opt => select.innerHTML += `<option value="${opt}">${opt}</option>`);
+                            select.innerHTML += `<option value="custom">Otra opción (especificar)...</option>`;
+                            if (options.includes(currentVal) || currentVal === 'custom') {
+                                select.value = currentVal;
+                            } else {
+                                select.value = "";
+                            }
+                        }
+                    }
+                    // Actualizar select de tipo de evento
+                    if (select.id === 'tipo-evento') {
+                        const currentVal = select.value;
+                        const options = predefinedOptions.tipoEvento;
+                        select.innerHTML = `<option value="">Seleccione el tipo de evento</option>`;
+                        options.forEach(opt => select.innerHTML += `<option value="${opt}">${opt}</option>`);
+                        select.innerHTML += `<option value="Otros">Otros</option>`;
+                        if (options.includes(currentVal) || currentVal === 'Otros') {
+                            select.value = currentVal;
+                        } else {
+                            select.value = "";
+                        }
+                    }
+                });
+            }
+            // --- FIN LÓGICA DE MODAL ---
+
+
             incluirEntradasCheckbox.addEventListener('change', toggleMenuSections);
             incluirPostresCheckbox.addEventListener('change', toggleMenuSections);
             incluirBebidasCheckbox.addEventListener('change', toggleMenuSections);
             
             toggleMenuSections();
             initializeTables();
-
-            // Resto de los event listeners y funciones de validación...
-            // (Omitidos por brevedad, ya que no cambian)
+            updateAllSelects(); // Para poblar el select de tipo de evento inicialmente
             
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
-                // La validación se omite aquí por brevedad, pero estaría presente
-                generatePDF();
+                if (validateForm()) {
+                    generatePDF();
+                }
             });
+
+            function showError(id, message) {
+                const errorElement = document.getElementById(id);
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+
+            function hideError(id) {
+                document.getElementById(id).style.display = 'none';
+            }
+
+            function validateForm() {
+                let isValid = true;
+                document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+                // Validar campos de texto y fecha
+                const requiredFields = ['cliente', 'fecha', 'hora-h', 'hora-m', 'tipo-evento', 'precio-adulto'];
+                requiredFields.forEach(id => {
+                    const input = document.getElementById(id);
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        showError(`error-${id.split('-')[0]}`, 'Este campo es obligatorio.');
+                    }
+                });
+
+                // Validar números positivos
+                const numberFields = [
+                    { id: 'adultos', errorId: 'error-adultos', message: 'El número de adultos debe ser un entero no negativo.' },
+                    { id: 'ninos', errorId: 'error-ninos', message: 'El número de niños debe ser un entero no negativo.' }
+                ];
+                numberFields.forEach(field => {
+                    const input = document.getElementById(field.id);
+                    const value = parseFloat(input.value);
+                    if (input.value.trim() !== '' && (value < 0 || !Number.isInteger(value))) {
+                        isValid = false;
+                        showError(field.errorId, field.message);
+                    }
+                });
+                
+                const adultosVal = parseInt(document.getElementById('adultos').value) || 0;
+                const ninosVal = parseInt(document.getElementById('ninos').value) || 0;
+
+                if (adultosVal === 0 && ninosVal === 0) {
+                    isValid = false;
+                    showError('error-adultos', 'Debe haber al menos un adulto o un niño.');
+                }
+
+                // Validar selecciones de menú
+                const validateMenuTable = (tableId, errorId, isChecked, minRows = 1) => {
+                    if (!isChecked) return true;
+                    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+                    if (rows.length < minRows) {
+                        showError(errorId, `Debe agregar al menos ${minRows} opción(es).`);
+                        return false;
+                    }
+                    let allSelected = true;
+                    rows.forEach(row => {
+                        const select = row.querySelector('select');
+                        if (!select || !select.value) {
+                            allSelected = false;
+                        } else if (select.value === 'custom') {
+                            const customInput = row.querySelector('.custom-option-input');
+                            if (!customInput || !customInput.value.trim()) {
+                                allSelected = false;
+                            }
+                        }
+                    });
+                    if (!allSelected) {
+                        showError(errorId, 'Por favor, seleccione o especifique una opción en cada fila.');
+                        return false;
+                    }
+                    return true;
+                };
+
+                if (!validateMenuTable('tabla-entradas', 'error-entradas', incluirEntradasCheckbox.checked)) isValid = false;
+                if (!validateMenuTable('tabla-plato-fuerte', 'error-plato-fuerte', true, 1)) isValid = false;
+                if (!validateMenuTable('tabla-postres', 'error-postres', incluirPostresCheckbox.checked)) isValid = false;
+                if (!validateMenuTable('tabla-bebidas', 'error-bebidas', incluirBebidasCheckbox.checked)) isValid = false;
+
+                if (ninosVal > 0) {
+                    if (!validateMenuTable('tabla-menu-ninos', 'error-menu-ninos', true, 1)) isValid = false;
+                }
+
+                return isValid;
+            }
 
             function getTableData(tableId) {
                 const tableBody = document.getElementById(tableId).querySelector('tbody');
@@ -617,6 +924,11 @@
                 const horaFormateada = `${horaH}:${horaM} ${horaAMPM}`;
                 let tipoDeEventoParaSaludo = document.getElementById('tipo-evento').value === 'Otros' ? document.getElementById('especificar-evento').value.trim() : document.getElementById('tipo-evento').value;
 
+                doc.setFont("Times-Roman", "bold").setFontSize(20 * fontMultiplier);
+                doc.setTextColor(titleColor[0], titleColor[1], titleColor[2]);
+                doc.text("Saludos Cordiales", 20, yOffset);
+                yOffset += doc.getTextDimensions("Saludos Cordiales").h + 5 * fontMultiplier;
+
                 doc.setFont("Helvetica", "normal");
                 doc.setFontSize(14 * fontMultiplier);
                 doc.setTextColor(70, 70, 70);
@@ -651,7 +963,7 @@
                         textHeight += doc.getTextDimensions(title).h + (10 * fontMultiplier);
                         if (optionsText) {
                             doc.setFont("Helvetica", "normal").setFontSize(14 * fontMultiplier);
-                            textHeight += doc.getTextDimensions(optionsText).h + (7 * fontMultiplier);
+                            textHeight += doc.getTextDimensions(optionsText).h + (3.5 * fontMultiplier); // Espacio reducido
                         }
 
                         const sectionHeight = textHeight + tableHeight + 15 * fontMultiplier;
@@ -677,7 +989,7 @@
                             doc.text(optionsText, 20, yOffset);
                             yOffset += doc.getTextDimensions(optionsText).h + 2 * fontMultiplier;
                         }
-                        yOffset += 5 * fontMultiplier;
+                        yOffset += 2.5 * fontMultiplier; // Espacio reducido
 
                         doc.autoTable({
                             startY: yOffset,
@@ -801,7 +1113,7 @@
                 doc.setTextColor(100, 100, 100);
                 doc.text("Notas: Esta cotización es válida por 30 días. Precios sujetos a cambios.", 20, yOffset);
 
-                doc.save('cotizacion.pdf');
+                doc.save(`Cotización ${cliente}.pdf`);
             }
         });
     </script>
